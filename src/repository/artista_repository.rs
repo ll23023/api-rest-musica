@@ -1,12 +1,12 @@
-use sqlx::{PGPool, Row};
-use crate::models::artistas::{Artista, NuevoArtista, ActualizarArtista};
+use sqlx::{PgPool, Row};
+use crate::models::artista::{Artista, NuevoArtista, ActualizarArtista};
 
-pub struct ArtistasRepository {
-    pool: PGPool,
+pub struct ArtistaRepository {
+    pool: PgPool,
 }
 
-impl ArtistasRepository {
-    pub fn new(pool: PGPool) -> Self {
+impl ArtistaRepository {
+    pub fn new(pool: PgPool) -> Self {
         Self { pool }
     }
 
@@ -22,6 +22,23 @@ impl ArtistasRepository {
         }).collect();
 
         Ok(artistas)
+    }
+
+    pub async fn obtener_artista_por_nombre(&self, nombre_artistico: &str) -> sqlx::Result<Option<Artista>> {
+        let fila = sqlx::query("SELECT id_artista, nombre_artistico, genero_principal FROM artistas WHERE nombre_artistico LIKE $1")
+            .bind(format!("%{}%", nombre_artistico))
+            .fetch_optional(&self.pool)
+            .await?;
+
+        if let Some(fila) = fila {
+            Ok(Some(Artista {
+                id_artista: fila.get("id_artista"),
+                nombre_artistico: fila.get("nombre_artistico"),
+                genero_principal: fila.get("genero_principal"),
+            }))
+        } else {
+            Ok(None)
+        }
     }
 
     pub async fn agregar_artista(&self, nuevo_artista: NuevoArtista) -> sqlx::Result<Artista> {
@@ -61,4 +78,9 @@ impl ArtistasRepository {
 
         Ok(())
     }
+
+    pub async fn eliminar_artista_por_id(&self, id_artista: i32) -> sqlx::Result<()> {
+        self.eliminar_artista(id_artista).await
+    }
 }
+

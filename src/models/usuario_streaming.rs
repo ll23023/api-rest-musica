@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
+pub type TipoSuscripcion = String;
+
 #[derive(Debug, Serialize, Deserialize, FromRow, Clone)]
 pub struct UsuarioStreaming {
     pub id_usuario: i32,
