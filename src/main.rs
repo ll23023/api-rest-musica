@@ -19,7 +19,16 @@ async fn main() {
 
     println!("Servidor escuchando en http://{}", direccion);
 
-    let pool = crear_pool().await.expect("No se pudo conectar a la base de datos");
+    let pool = match crear_pool().await {
+        Ok(pool) => pool,
+        Err(error) => {
+            eprintln!(
+                "Error al conectar a la base de datos: {}\nRevisa tu variable DATABASE_URL en el archivo .env o en el entorno.",
+                error
+            );
+            return;
+        }
+    };
 
     axum::serve(listener, unificar_routers(pool))
         .await
