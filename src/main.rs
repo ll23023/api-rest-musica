@@ -40,5 +40,5 @@ fn unificar_routers(pool: sqlx::PgPool) -> axum::Router {
     artista_router(pool.clone())
         .merge(cancion_router(pool.clone()))
         .merge(album_router(pool.clone()))
-        .merge(usuario_streaming_router(pool))
+        .merge(usuario_streaming_router(pool.clone()))
 }
