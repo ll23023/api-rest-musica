@@ -1,12 +1,13 @@
-mod service;
+mod config;
 mod controller;
 mod models;
 mod repository;
-mod config;
+mod service;
 
+use controller::album_controller::album_router;
 use controller::artista_controller::artista_router;
 use controller::cancion_controller::cancion_router;
-use controller::album_controller::album_router;
+use controller::usuario_streaming_controller::usuario_streaming_router;
 
 use config::config::crear_pool;
 
@@ -14,8 +15,8 @@ use config::config::crear_pool;
 async fn main() {
     let direccion = "127.0.0.1:3000";
     let listener = tokio::net::TcpListener::bind(direccion)
-    .await
-    .expect("No se pudo iniciar el servidor");
+        .await
+        .expect("No se pudo iniciar el servidor");
 
     println!("Servidor escuchando en http://{}", direccion);
 
@@ -36,9 +37,8 @@ async fn main() {
 }
 
 fn unificar_routers(pool: sqlx::PgPool) -> axum::Router {
-    // Aquí se combinan los routers de cada entidad
     artista_router(pool.clone())
         .merge(cancion_router(pool.clone()))
-        .merge(album_router(pool))
+        .merge(album_router(pool.clone()))
+        .merge(usuario_streaming_router(pool))
 }
-
