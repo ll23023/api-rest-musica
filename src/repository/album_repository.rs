@@ -48,8 +48,8 @@ impl AlbumRepository {
     pub async fn agregar_album(&self, nuevo_album: NuevoAlbum) -> sqlx::Result<Album> {
         let fila = sqlx::query(
             "INSERT INTO albumes (titulo, fecha_lanzamiento, id_artista)
-             VALUES ($1, $2, $3)
-             RETURNING id_album, titulo, fecha_lanzamiento, id_artista",
+                  VALUES ($1, $2, $3)
+                  RETURNING id_album, titulo, fecha_lanzamiento, id_artista",
         )
         .bind(nuevo_album.titulo)
         .bind(nuevo_album.fecha_lanzamiento)
@@ -71,7 +71,7 @@ impl AlbumRepository {
         album_actualizado: ActualizarAlbum,
     ) -> sqlx::Result<Album> {
         let fila = sqlx::query(
-            "UPDATE albumes SET titulo = $1, fecha_lanzamiento = $2, id_artista = $3
+            "UPDATE albumes SET titulo = COALESCE($1, titulo), fecha_lanzamiento = COALESCE($2, fecha_lanzamiento), id_artista = COALESCE($3, id_artista)
              WHERE id_album = $4
              RETURNING id_album, titulo, fecha_lanzamiento, id_artista",
         )

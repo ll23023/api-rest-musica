@@ -40,7 +40,6 @@ pub async fn agregar_album(
         })),
     }
 }
-
 pub async fn actualizar_album(
     State(pool): State<PgPool>,
     Path(id_album): Path<i32>,
