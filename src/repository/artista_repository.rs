@@ -56,7 +56,7 @@ impl ArtistaRepository {
     }
 
     pub async fn actualizar_artista(&self, id_artista: i32, artista_actualizado: ActualizarArtista) -> sqlx::Result<Artista> {
-        let fila = sqlx::query("UPDATE artistas SET nombre_artistico = $1, genero_principal = $2 WHERE id_artista = $3 RETURNING id_artista, nombre_artistico, genero_principal")
+        let fila = sqlx::query("UPDATE artistas SET nombre_artistico = COALESCE($1, nombre_artistico), genero_principal = COALESCE($2, genero_principal) WHERE id_artista = $3 RETURNING id_artista, nombre_artistico, genero_principal")
             .bind(artista_actualizado.nombre_artistico)
             .bind(artista_actualizado.genero_principal)
             .bind(id_artista)

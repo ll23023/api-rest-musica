@@ -13,8 +13,8 @@ pub fn album_router(pool: PgPool) -> Router {
         .route("/albumes", get(obtener_albumes))
         .route("/albumes", post(agregar_album))
         .route("/albumes", delete(eliminar_album))
-        .route("/albumes/:id", delete(eliminar_album_por_id))
+        .route("/albumes/{id}", delete(eliminar_album_por_id))
         .route("/albumes", put(actualizar_album))
-        .route("/albumes/:id", get(obtener_album_por_id))
+        .route("/albumes/{id}", get(obtener_album_por_id))
         .with_state(pool)
 }

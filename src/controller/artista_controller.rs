@@ -14,12 +14,11 @@ use crate::service::artista_service::{
 
 pub fn artista_router(pool: PgPool) -> Router {
     Router::new()
-
-    .route("/artistas", get(obtener_artistas))
-        .route("/artistas/:nombre", get(obtener_artista_por_nombre))
-        .route("/artistas", post(crear_artista))
-        .route("/artistas", put(actualizar_artista))
-        .route("/artistas", delete(eliminar_artista))
-        .route("/artistas/id/:id_artista", delete(eliminar_artista_por_id))
+        .route("/api/artistas", get(obtener_artistas))
+        .route("/api/artistas/nombre/{nombre}", get(obtener_artista_por_nombre))
+        .route("/api/artistas", post(crear_artista))
+        .route("/api/artistas/{id_artista}", put(actualizar_artista))
+        .route("/api/artistas", delete(eliminar_artista))
+        .route("/api/artistas/id/{id_artista}", delete(eliminar_artista_por_id))
         .with_state(pool)
 }

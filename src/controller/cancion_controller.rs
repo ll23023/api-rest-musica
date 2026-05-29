@@ -13,8 +13,8 @@ pub fn cancion_router(pool: PgPool) -> Router {
         .route("/canciones", get(obtener_canciones))
         .route("/canciones", post(agregar_cancion))
         .route("/canciones", delete(eliminar_cancion))
-        .route("/canciones/:id", delete(eliminar_cancion_por_id))
+        .route("/canciones/{id}", delete(eliminar_cancion_por_id))
         .route("/canciones", put(actualizar_cancion))
-        .route("/canciones/:id", get(obtener_cancion_por_id))
+        .route("/canciones/{id}", get(obtener_cancion_por_id))
         .with_state(pool)
 }

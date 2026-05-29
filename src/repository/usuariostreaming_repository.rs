@@ -1,5 +1,7 @@
+#![allow(dead_code)]
+
 use crate::models::usuario_streaming::{ActualizarUsuario, NuevoUsuario, UsuarioStreaming};
-use sqlx::{Error, PgPool, Result};
+use sqlx::{PgPool, Result};
 
 pub struct UsuarioStreamingRepository;
 
