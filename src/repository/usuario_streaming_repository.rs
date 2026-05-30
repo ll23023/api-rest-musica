@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use crate::models::usuario_streaming::{ActualizarUsuario, NuevoUsuario, UsuarioStreaming};
-use sqlx::{Error, PgPool, Result};
+use sqlx::{Error, PgPool, Result, Row};
 
 pub struct UsuarioStreamingRepository;
 
@@ -59,48 +59,26 @@ impl UsuarioStreamingRepository {
         id: i32,
         datos: ActualizarUsuario,
     ) -> Result<Option<UsuarioStreaming>> {
-        match (datos.nombre_usuario, datos.tipo_suscripcion) {
-            (Some(nombre), Some(tipo)) => {
-                let usuario = sqlx::query_as::<_, UsuarioStreaming>(
-                    "UPDATE Usuarios_Streaming
-                     SET nombre_usuario = $1, tipo_suscripcion = $2
-                     WHERE id_usuario = $3
-                     RETURNING id_usuario, nombre_usuario, tipo_suscripcion",
-                )
-                .bind(nombre)
-                .bind(tipo)
-                .bind(id)
-                .fetch_optional(pool)
-                .await?;
-                Ok(usuario)
-            }
-            (Some(nombre), None) => {
-                let usuario = sqlx::query_as::<_, UsuarioStreaming>(
-                    "UPDATE Usuarios_Streaming
-                     SET nombre_usuario = $1
-                     WHERE id_usuario = $2
-                     RETURNING id_usuario, nombre_usuario, tipo_suscripcion",
-                )
-                .bind(nombre)
-                .bind(id)
-                .fetch_optional(pool)
-                .await?;
-                Ok(usuario)
-            }
-            (None, Some(tipo)) => {
-                let usuario = sqlx::query_as::<_, UsuarioStreaming>(
-                    "UPDATE Usuarios_Streaming
-                     SET tipo_suscripcion = $1
-                     WHERE id_usuario = $2
-                     RETURNING id_usuario, nombre_usuario, tipo_suscripcion",
-                )
-                .bind(tipo)
-                .bind(id)
-                .fetch_optional(pool)
-                .await?;
-                Ok(usuario)
-            }
-            (None, None) => Self::obtener_usuario_id(pool, id).await,
+        let fila = sqlx::query(
+                "UPDATE Usuarios_Streaming
+                 SET nombre_usuario = COALESCE($1, nombre_usuario), tipo_suscripcion = COALESCE($2, tipo_suscripcion)
+                 WHERE id_usuario = $3
+                 RETURNING id_usuario, nombre_usuario, tipo_suscripcion",
+            )
+            .bind(datos.nombre_usuario)
+            .bind(datos.tipo_suscripcion)
+            .bind(id)
+            .fetch_optional(pool)
+            .await?;
+
+        if let Some(fila) = fila {
+            Ok(Some(UsuarioStreaming {
+                id_usuario: fila.get("id_usuario"),
+                nombre_usuario: fila.get("nombre_usuario"),
+                tipo_suscripcion: fila.get("tipo_suscripcion"),
+            }))
+        } else {
+            Ok(None)
         }
     }
 
@@ -110,5 +88,13 @@ impl UsuarioStreamingRepository {
             .await?;
 
         Ok(calcular.0)
+    }
+
+    pub async fn eliminar_usuario(pool: &PgPool, id: i32) -> Result<()> {
+        sqlx::query("DELETE FROM Usuarios_Streaming WHERE id_usuario = $1")
+            .bind(id)
+            .execute(pool)
+            .await?;
+        Ok(())
     }
 }

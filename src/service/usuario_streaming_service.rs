@@ -72,3 +72,22 @@ pub async fn contar_usuarios(State(pool): State<PgPool>) -> Json<i64> {
         Err(_) => Json(0),
     }
 }
+
+pub async fn eliminar_usuario(
+    State(pool): State<PgPool>,
+    Json(id_usuario): Json<i32>,
+) -> Json<bool> {
+    match UsuarioStreamingRepository::eliminar_usuario(&pool, id_usuario).await {
+        Ok(_) => Json(true),
+        Err(_) => Json(false),
+    }
+}
+pub async fn eliminar_usuario_por_id(
+    State(pool): State<PgPool>,
+    Path(id_usuario): Path<i32>,
+) -> Json<bool> {
+    match UsuarioStreamingRepository::eliminar_usuario(&pool, id_usuario).await {
+        Ok(_) => Json(true),
+        Err(_) => Json(false),
+    }
+}

@@ -1,12 +1,12 @@
 use axum::{
     Router,
-    routing::{get, post, put},
+    routing::{delete, get, post, put},
 };
 use sqlx::PgPool;
 
 use crate::service::usuario_streaming_service::{
-    actualizar_usuario, contar_usuarios, crear_usuario, obtener_usuario_por_id,
-    obtener_usuario_por_nombre, obtener_usuarios,
+    actualizar_usuario, contar_usuarios, crear_usuario, eliminar_usuario, eliminar_usuario_por_id,
+    obtener_usuario_por_id, obtener_usuario_por_nombre, obtener_usuarios,
 };
 
 pub fn usuario_streaming_router(pool: PgPool) -> Router {
@@ -20,5 +20,10 @@ pub fn usuario_streaming_router(pool: PgPool) -> Router {
             get(obtener_usuario_por_nombre),
         )
         .route("/api/usuarios/contar", get(contar_usuarios))
+        .route("/api/usuarios/eliminar", delete(eliminar_usuario))
+        .route(
+            "/api/usuarios/eliminar/{id}",
+            delete(eliminar_usuario_por_id),
+        )
         .with_state(pool)
 }
