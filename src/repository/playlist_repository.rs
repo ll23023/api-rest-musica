@@ -63,14 +63,15 @@ impl PlaylistRepository {
         })
     }
 
-    pub async fn actualizar_playlist(
+   pub async fn actualizar_playlist(
         &self,
         id_playlist: i32,
         datos: ActualizarPlaylist,
     ) -> sqlx::Result<Playlist> {
         let fila = sqlx::query(
             "UPDATE playlists 
-             SET nombre_lista = COALESCE($1, nombre_lista), id_usuario = COALESCE($2, id_usuario) 
+             SET nombre_lista = COALESCE($1::varchar, nombre_lista), 
+                 id_usuario = COALESCE($2::integer, id_usuario) 
              WHERE id_playlist = $3 
              RETURNING id_playlist, nombre_lista, id_usuario, fecha_creacion"
         )

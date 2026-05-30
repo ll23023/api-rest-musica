@@ -14,7 +14,7 @@ pub fn playlist_router(pool: PgPool) -> Router {
         .route("/api/playlists", post(agregar_playlist))
         .route("/api/playlists", delete(eliminar_playlist))
         .route("/api/playlists/{id}", delete(eliminar_playlist_por_id))
-        .route("/api/playlists", put(actualizar_playlist))
+        .route("/api/playlists/{id}", put(actualizar_playlist))
         .route("/api/playlists/{id}", get(obtener_playlist_por_id))
         .with_state(pool)
 }
