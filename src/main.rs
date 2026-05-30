@@ -8,6 +8,7 @@ use controller::album_controller::album_router;
 use controller::artista_controller::artista_router;
 use controller::cancion_controller::cancion_router;
 use controller::usuario_streaming_controller::usuario_streaming_router;
+use controller::playlist_controller::playlist_router;
 
 use config::config::crear_pool;
 
@@ -41,4 +42,5 @@ fn unificar_routers(pool: sqlx::PgPool) -> axum::Router {
         .merge(cancion_router(pool.clone()))
         .merge(album_router(pool.clone()))
         .merge(usuario_streaming_router(pool.clone()))
+        .merge(playlist_router(pool.clone()))
 }
