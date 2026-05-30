@@ -10,11 +10,11 @@ use sqlx::PgPool;
 
 pub fn cancion_router(pool: PgPool) -> Router {
     Router::new()
-        .route("/canciones", get(obtener_canciones))
-        .route("/canciones", post(agregar_cancion))
-        .route("/canciones", delete(eliminar_cancion))
-        .route("/canciones/{id}", delete(eliminar_cancion_por_id))
-        .route("/canciones", put(actualizar_cancion))
-        .route("/canciones/{id}", get(obtener_cancion_por_id))
+        .route("/api/canciones", get(obtener_canciones))
+        .route("/api/canciones", post(agregar_cancion))
+        .route("/api/canciones", delete(eliminar_cancion))
+        .route("/api/canciones/{id}", delete(eliminar_cancion_por_id))
+        .route("/api/canciones/{id}", put(actualizar_cancion))
+        .route("/api/canciones/{id}", get(obtener_cancion_por_id))
         .with_state(pool)
 }
